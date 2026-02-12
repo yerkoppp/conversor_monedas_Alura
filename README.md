@@ -74,6 +74,11 @@ Ingrese la cantidad a calcular: 100
   Destino: CL$ 94500,00 (Peso Chileno)
 +----------------------------------------------+
 ```
+## 📸 Capturas de Pantalla
+A continuación, se muestra el funcionamiento de la aplicación en sus diferentes etapas:
+
+<table style="width: 100%; text-align: center;"> <tr> <td><b>Menú Principal</b></td> <td><b>Selección de Monedas</b></td> <td><b>Solicitud de Datos</b></td> </tr> <tr> <td><img src="assets/menu_principal.png" width="250" alt="Menú Principal"></td> <td><img src="assets/menu_monedas.png" width="250" alt="Menú de Monedas"></td> <td><img src="assets/solicitudes.png" width="250" alt="Solicitud de Cantidad"></td> </tr> <tr> <td><b>Conversión Exitosa</b></td> <td><b>Validación de Errores</b></td> <td><b>Historial de Consultas</b></td> </tr> <tr> <td><img src="assets/conversion_correcta.png" width="250" alt="Conversión Correcta"></td> <td><img src="assets/validaciones.png" width="250" alt="Validación de Entradas"></td> <td><img src="assets/historial.png" width="350" alt="Historial de Consultas"></td> </tr> </table>
+
 ## 👨‍💻 Autor
 
 Yerko Osorio 
