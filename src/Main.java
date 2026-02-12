@@ -113,8 +113,7 @@ public class Main {
             System.out.println("-".repeat(46));
             System.out.println("Ingrese la cantidad a calcular:");
             try {
-                double cantidad = Double.parseDouble(sc.nextLine().replace(",", "."));
-                return cantidad;
+                return Double.parseDouble(sc.nextLine().replace(",", "."));
             } catch (NumberFormatException e) {
                 System.out.println("Debe ingresar un número.");
             }catch (IllegalStateException e) {
