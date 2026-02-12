@@ -8,43 +8,44 @@ public class Main {
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-
-
         ServicioMoneda service = new ServicioMoneda();
         boolean continuar = true;
 
-        System.out.println(" ".repeat(14)+"CONVERSOR DE MONEDAS"+" ".repeat(14));
+        System.out.println(" ".repeat(14) + "CONVERSOR DE MONEDAS" + " ".repeat(14));
 
         while (continuar) {
             mostrarEncabezadoMenu();
-            try {
-                mostrarMenuOpciones();
+            System.out.println("   (1) Convertir moneda");
+            System.out.println("   (2) Ver historial de consultas");
+            System.out.println("   (0) Salir");
+            System.out.print("\nSeleccione una opción: ");
+            String opcionPrincipal = sc.nextLine(); // Leemos como String para evitar errores de buffer
 
+            switch (opcionPrincipal) {
+                case "1" -> ejecutarConversion(service);
+                case "2" -> {
+                    mostrarHistorial();
+                    pausarYContinuar();
+                }
+                case "0" -> continuar = false;
+                default -> System.out.println("Opción no válida.");
+            }
+        }
+        System.out.println("Gracias por usar el conversor. ¡Adiós!");
+    }
+
+    private static void ejecutarConversion(ServicioMoneda service) {
+
+        try {
+                mostrarMenuOpciones();
                 // Selección Moneda Origen
                 String monedaBase = solicitarMoneda("ORIGEN");
-                if (monedaBase.equals("Salir")) {
-                    mostrarHistorial();
-                    break;
-                }
-                if (monedaBase.equals("Historial")) {
-                    pausarYContinuar();
-                    continue;
-                }
+                if (monedaBase.equals("Salir")) return;
                 // Selección Moneda Destino
                 String monedaDestino = solicitarMoneda("DESTINO");
-                if (monedaDestino.equals("Salir")) {
-                    mostrarHistorial();
-                    break;
-                }
-                if (monedaDestino.equals("Historial")) {
-                    pausarYContinuar();
-                    continue;
-                }
+                if (monedaDestino.equals("Salir")) return;
                 // Cantidad
-                System.out.println("-".repeat(46));
-                System.out.println("Ingrese la cantidad a calcular:");
-                double cantidad = sc.nextDouble();
-                sc.nextLine();
+                double cantidad = solicitarCantidad();
 
                 // 2. Cálculo
                 double cantidadResultado = service.convertir(cantidad, monedaBase, monedaDestino);
@@ -55,12 +56,11 @@ public class Main {
 
                 pausarYContinuar();
 
-            } catch (Exception e) {
-                System.out.println("Error: Entrada no válida o problema de conexión.");
-                sc.nextLine(); // Limpiar el buffer del scanner
-            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+
         }
-        System.out.println("Gracias por usar el conversor. ¡Adiós!");
+
     }
 
     public static void mostrarEncabezadoMenu(){
@@ -76,7 +76,6 @@ public class Main {
                     monedas[i].getCodigo(),
                     monedas[i].getNombre());
         }
-        System.out.println("   ("+(monedas.length+1)+") Historial de consultas.");
         System.out.println("   (0) Salir.");
     }
 
@@ -92,16 +91,36 @@ public class Main {
     }
 
     public static String solicitarMoneda(String tipoMoneda) {
+        while (true){
         System.out.println("-".repeat(46));
-        System.out.println("Seleccione la moneda de "+tipoMoneda+" (o 0 para salir):");
-        int opcion = sc.nextInt();
-        sc.nextLine();
-        if (opcion == 0) return "Salir";
-        if (opcion == Moneda.values().length + 1) {
-            mostrarHistorial();
-            return "Historial";
+        System.out.println("Seleccione la moneda de "+tipoMoneda+" (o 0 para cancelar):");
+            try {
+                int opcion = Integer.parseInt(sc.nextLine());
+                if (opcion == 0) return "Salir";
+
+                return obtenerMoneda(opcion);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Debe ingresar un número de la lista.");
+            }catch (IllegalStateException e) {
+                System.out.println("[!] " + e.getMessage());
+            }
         }
-        return obtenerMoneda(opcion);
+    }
+
+    public static double solicitarCantidad() {
+        while (true){
+            System.out.println("-".repeat(46));
+            System.out.println("Ingrese la cantidad a calcular:");
+            try {
+                double cantidad = Double.parseDouble(sc.nextLine().replace(",", "."));
+                return cantidad;
+            } catch (NumberFormatException e) {
+                System.out.println("Debe ingresar un número.");
+            }catch (IllegalStateException e) {
+                System.out.println("[!] " + e.getMessage());
+            }
+        }
     }
 
     public static void mostrarHistorial() {
@@ -111,12 +130,12 @@ public class Main {
         }
 
         System.out.println("\n" + "=".repeat(80));
-        System.out.printf("| %-12s | %-8s | %-8s | %-15s | %-15s |%n",
+        System.out.printf("| %-20s | %-8s | %-8s | %-15s | %-15s |%n",
                 "FECHA", "ORIGEN", "DESTINO", "CANTIDAD", "CONVERSIÓN");
         System.out.println("-".repeat(80));
 
         for (Consulta c : consultas) {
-            System.out.printf("| %-12s | %-8s | %-8s | %-15.2f | %-15.2f |%n",
+            System.out.printf("| %-20s | %-8s | %-8s | %-15.2f | %-15.2f |%n",
                     c.getFechaConsultaFormateada(),
                     c.getMonedaBase(),
                     c.getMonedaDestino(),

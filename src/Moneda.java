@@ -18,6 +18,15 @@ public enum Moneda {
         this.simbolo = simbolo;
     }
 
+    public static Moneda deCodigo(String codigo) {
+        for (Moneda m : values()) {
+            if (m.codigo.equalsIgnoreCase(codigo)) {
+                return m;
+            }
+        }
+        throw new IllegalArgumentException("Código de moneda no soportado: " + codigo);
+    }
+
     // Getters para acceder a los datos
     public String getNombre() { return nombre; }
     public String getCodigo() { return codigo; }

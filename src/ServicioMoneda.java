@@ -44,6 +44,9 @@ public class ServicioMoneda {
             HttpResponse<String> respuesta = cliente.send(solicitud, HttpResponse.BodyHandlers.ofString());
 
             RespuestaApi data = gson.fromJson(respuesta.body(), RespuestaApi.class);
+            if (data.tasasConversion() == null) {
+                throw new RuntimeException("La API no devolvió tasas de conversión.");
+            }
             this.tasasFiltradas = filtrarTasas(data.tasasConversion());
 
         } catch (Exception e) {
@@ -52,11 +55,13 @@ public class ServicioMoneda {
     }
 
     public double convertir(double cantidad, String desde, String hacia){
-        if (tasasFiltradas == null) throw new IllegalStateException("Tasas no cargadas");
+        if (tasasFiltradas == null) {
+            inicializarTasas();
+        }
 
         // Verificamos que existan las monedas antes de operar
         if (!tasasFiltradas.containsKey(desde) || !tasasFiltradas.containsKey(hacia)) {
-            throw new IllegalArgumentException("Moneda no soportada");
+            throw new IllegalArgumentException("Una de las monedas seleccionadas no está disponible.");
         }
 
         return  (tasasFiltradas.get(hacia)/
@@ -64,7 +69,6 @@ public class ServicioMoneda {
     }
 
     public Map<String, Double> filtrarTasas(Map<String, Double> todasLasTasas) {
-
         return todasLasTasas.entrySet().stream()
                 .filter(entry -> PERMITIDAS.contains(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -74,8 +78,8 @@ public class ServicioMoneda {
         double resultado = convertir(cantidad, desde, hacia);
 
         // Para buscar el símbolo, usamos el Enum
-        Moneda mOrigen = Moneda.valueOf(desde);
-        Moneda mDestino = Moneda.valueOf(hacia);
+        Moneda mOrigen = Moneda.deCodigo(desde);
+        Moneda mDestino = Moneda.deCodigo(hacia);
 
         return String.format("""
             
